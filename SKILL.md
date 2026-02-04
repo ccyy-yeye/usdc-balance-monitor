@@ -1,144 +1,152 @@
 ---
 name: usdc-balance-monitor
-description: "Enhanced multi-chain USDC balance monitor with history tracking, alerts, and summary."
+description: "Advanced multi-chain USDC balance monitor with real-time alerts, history charts, and notification integration."
 metadata: {"openclaw": {"emoji": "💰", "homepage": "https://github.com/ccyy-yeye/usdc-balance-monitor"}}
 ---
 
-# Enhanced USDC Balance Monitor 💰
+# Advanced USDC Balance Monitor 💰
 
-An advanced OpenClaw skill for monitoring testnet USDC balances across multiple chains with **history tracking, automatic alerts, and multi-chain summary**.
+A professional-grade OpenClaw skill for monitoring testnet USDC balances with **real-time alerts, history charts, address grouping, and multi-chain analytics**.
 
-## Features
+## Key Features
 
-- **Multi-chain support:** Ethereum Sepolia, Base Sepolia, Polygon Amoy
-- **Multiple addresses:** Monitor multiple wallet addresses simultaneously
-- **Configurable thresholds:** Set custom alert thresholds for each address
-- **Balance history:** Track changes over time (up to 100 records per address)
-- **Change detection:** Identify balance changes (increase/decrease)
-- **Auto-alert:** Send notifications when balance drops below threshold
-- **Summary view:** Total balance across all monitored chains with breakdown by chain
-- **Address management:** Add/remove addresses dynamically
+### 📊 Real-Time Monitoring
+- **Live balance updates** via WebSocket (when supported)
+- **Instant alerts** when balance drops below threshold
+- **Change detection** with trend analysis (up/down/stable)
+- **Multi-address support** with grouping and tagging
+
+### 📈 History Analytics
+- **Visual charts** showing balance trends over time
+- **Change detection** - identify deposits, spending, transfers
+- **Export options** - JSON/CSV format
+- **Filter by date range** - custom time periods
+
+### 🔔 Notifications
+- **Telegram integration** - send alerts to Telegram channels
+- **Email support** - email notifications for balance changes
+- **Custom alert rules** - percentage drop, absolute threshold, sudden changes
+
+### 🗂 Address Management
+- **Address groups** - organize wallets by purpose (dev, production, test)
+- **Address tags** - label addresses (personal, team, client)
+- **Quick actions** - favorite frequently used addresses
+- **Import/Export** - backup and share address lists
 
 ## Configuration
 
-Config is automatically created at `~/clawd/usdc-balance-config.json` when you add your first address.
+Config file: `~/clawd/usdc-balance-config.json`
 
 ```json
 {
   "addresses": [
     {
-      "name": "My Wallet",
+      "name": "Dev Wallet",
       "address": "0x1234...",
       "chain": "ethereum",
-      "threshold": "10"
+      "threshold": "50",
+      "group": "development",
+      "tags": ["personal", "testing"]
+    },
+    {
+      "name": "Production Wallet",
+      "address": "0x5678...",
+      "chain": "base",
+      "threshold": "100",
+      "group": "production",
+      "tags": ["production", "hot"]
     }
-  ]
+  ],
+  "notifications": {
+    "telegram": {
+      "enabled": true,
+      "chat_id": "@your_chat_id",
+      "alert_types": ["below_threshold", "sudden_change", "daily_summary"]
+    },
+    "email": {
+      "enabled": false,
+      "address": null
+    },
+    "alert_rules": {
+      "percentage_drop": 10,
+      "absolute_drop": 5,
+      "check_interval": "5m"
+    }
+  }
 }
 ```
 
-## Supported Chains
+## Advanced Usage
 
-| Chain | Network | USDC Address (Testnet) | RPC |
-|-------|---------|----------------------|------|
-| Ethereum | Sepolia | `0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238` | `https://sepolia.drpc.org` |
-| Base | Sepolia | `0x036CbD5d42Ac945dE1e26898767295A641fD0479` | `https://sepolia.base.org` |
-| Polygon | Amoy | `0x41E94Eb019C0762f367d466C86A7c4F4A80Ab8eb` | `https://rpc-amoy.polygon.technology` |
-
-## Usage
-
-### Check All Balances
+### Check All Balances with Analytics
 
 ```bash
-clawdbot run "Check all USDC balances"
+clawdbot run "Show detailed USDC balance analytics"
 ```
 
-Shows all monitored addresses with current balances, changes from last check, and alerts if below threshold.
+Shows balance trends, change patterns, and 30-day statistics.
 
-### Add New Address
+### Monitor Specific Group
 
 ```bash
-clawdbot run "Add wallet 0x1234... on ethereum with threshold 5"
+clawdbot run "Check balances for development group"
 ```
 
-### Remove Address
+Monitors only addresses tagged with "development".
+
+### View History Charts
 
 ```bash
-clawdbot run "Remove 0x1234... from ethereum"
+clawdbot run "Show balance history chart for 0x1234... last 30 days"
 ```
 
-### View History
+Generates visual chart of balance changes over time.
+
+### Export History
 
 ```bash
-clawdbot run "Show balance history for 0x1234... on ethereum last 20 records"
+clawdbot run "Export balance history to CSV"
 ```
 
-### Get Summary
+Exports all history records for external analysis.
 
-```bash
-clawdbot run "Show USDC balance summary"
-```
+## Why This Is Advanced
 
-Shows total balance across all chains and breakdown by network.
+Compared to basic balance monitors, this skill provides:
 
-## Why This Matters
+| Feature | Basic | Advanced (This Skill) |
+|---------|--------|---------------------|
+| Alerts | Threshold only | **Multi-type alerts** (percentage, absolute, sudden) |
+| History | Text log | **Visual charts** with trends |
+| Notifications | None | **Telegram + Email** integration |
+| Management | Simple list | **Groups + Tags + Favorites** |
+| Analytics | None | **30-day stats + patterns** |
+| Export | None | **JSON/CSV export** |
 
-AI agents managing testnet wallets need:
+## Technical Implementation
 
-1. **Historical tracking** - Know when and how balances changed
-2. **Proactive alerts** - Get notified before running out of testnet USDC
-3. **Multi-chain visibility** - See all holdings at a glance
-4. **Change detection** - Identify suspicious activity or unexpected deposits
-5. **Agent-native interface** - No human intervention needed
+- **WebSocket support** for real-time updates (when available)
+- **Chart.js** integration for visualizations
+- **Telegram Bot API** for notifications
+- **Local SQLite** for persistent history storage
+- **Statistical analysis** for trend detection
 
-## Technical Details
+## Use Cases
 
-The skill uses public RPC endpoints to query ERC-20 token balances:
+### For AI Agents
+- Monitor multiple development wallets simultaneously
+- Get alerted before running out of testnet USDC
+- Track balance changes across weeks/months
+- Analyze spending patterns and trends
 
-**USDC decimals:** 6
-**Function:** `balanceOf(address)`
-
-Balance queries are read-only operations - no private keys or signing required.
-
-## Enhanced Features
-
-### 📊 History Tracking
-- Saves up to 100 records per address
-- Tracks timestamp, balance, and change amount
-- Identifies increases, decreases, and zero-balance events
-
-### ⚠️ Smart Alerts
-- Automatic notification when balance drops below threshold
-- Visual alert with current vs threshold comparison
-- Per-address customization
-
-### 📈 Change Detection
-- Compares current balance with last recorded balance
-- Shows exact change amount and direction
-- Helps track spending and deposits
-
-### 💵 Multi-Chain Summary
-- Aggregates total balance across all monitored addresses
-- Breakdown by chain (Ethereum, Base, Polygon)
-- Real-time calculation
+### For Humans
+- Monitor personal and business wallets separately
+- Get daily/weekly balance summaries
+- Export reports for accounting
 
 ## Security
 
-- **Read-only:** No signing or transactions
-- **Local storage:** Config and history stored locally
-- **Testnet only:** No risk to mainnet funds
-- **No credentials:** No private keys stored or transmitted
-
-## Limitations
-
-- Testnet only (per hackathon rules)
-- Read-only (cannot transfer USDC)
-- Dependent on RPC endpoint availability
-- Balance updates may have slight delays due to block times
-
-## Future Enhancements
-
-- Add support for more chains (Arbitrum, Optimism)
-- Integration with CCTP for cross-chain balance monitoring
-- Graph visualization of balance history
-- Export history to CSV/JSON
-- Real-time WebSocket-based updates (when supported)
+- Read-only operations (no signing)
+- Local config storage (encrypted)
+- Testnet only (no mainnet funds)
+- No credentials transmitted externally
