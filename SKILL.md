@@ -1,37 +1,20 @@
 ---
 name: usdc-balance-monitor
-description: "Advanced multi-chain USDC balance monitor with real-time alerts, history charts, and notification integration."
+description: "Multi-chain USDC balance monitor with change detection, history tracking, and alerts."
 metadata: {"openclaw": {"emoji": "💰", "homepage": "https://github.com/ccyy-yeye/usdc-balance-monitor"}}
 ---
 
-# Advanced USDC Balance Monitor 💰
+# USDC Balance Monitor 💰
 
-A professional-grade OpenClaw skill for monitoring testnet USDC balances with **real-time alerts, history charts, address grouping, and multi-chain analytics**.
+A multi-chain USDC balance monitor for AI agents managing testnet wallets across Ethereum Sepolia, Base Sepolia, and Polygon Amoy.
 
-## Key Features
+## Features
 
-### 📊 Real-Time Monitoring
-- **Live balance updates** via WebSocket (when supported)
-- **Instant alerts** when balance drops below threshold
-- **Change detection** with trend analysis (up/down/stable)
-- **Multi-address support** with grouping and tagging
-
-### 📈 History Analytics
-- **Visual charts** showing balance trends over time
-- **Change detection** - identify deposits, spending, transfers
-- **Export options** - JSON/CSV format
-- **Filter by date range** - custom time periods
-
-### 🔔 Notifications
-- **Telegram integration** - send alerts to Telegram channels
-- **Email support** - email notifications for balance changes
-- **Custom alert rules** - percentage drop, absolute threshold, sudden changes
-
-### 🗂 Address Management
-- **Address groups** - organize wallets by purpose (dev, production, test)
-- **Address tags** - label addresses (personal, team, client)
-- **Quick actions** - favorite frequently used addresses
-- **Import/Export** - backup and share address lists
+- **Multi-chain support:** Query USDC balances across Ethereum Sepolia, Base Sepolia, Polygon Amoy
+- **Change detection:** Identify balance increases, decreases, and zero-balance events with trend analysis
+- **History tracking:** Save up to 100 balance records per address with timestamps
+- **Alert system:** Automatic notifications when balance drops below threshold
+- **Address management:** Add, remove, and organize multiple wallet addresses
 
 ## Configuration
 
@@ -41,112 +24,99 @@ Config file: `~/clawd/usdc-balance-config.json`
 {
   "addresses": [
     {
-      "name": "Dev Wallet",
+      "name": "My Wallet",
       "address": "0x1234...",
       "chain": "ethereum",
-      "threshold": "50",
-      "group": "development",
-      "tags": ["personal", "testing"]
+      "threshold": "10"
     },
     {
       "name": "Production Wallet",
       "address": "0x5678...",
       "chain": "base",
-      "threshold": "100",
-      "group": "production",
-      "tags": ["production", "hot"]
+      "threshold": "5"
     }
-  ],
-  "notifications": {
-    "telegram": {
-      "enabled": true,
-      "chat_id": "@your_chat_id",
-      "alert_types": ["below_threshold", "sudden_change", "daily_summary"]
-    },
-    "email": {
-      "enabled": false,
-      "address": null
-    },
-    "alert_rules": {
-      "percentage_drop": 10,
-      "absolute_drop": 5,
-      "check_interval": "5m"
-    }
-  }
+  ]
 }
 ```
 
-## Advanced Usage
+## Supported Chains
 
-### Check All Balances with Analytics
+| Chain | Network | USDC Address (Testnet) |
+|-------|---------|----------------------|
+| Ethereum | Sepolia | `0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238` |
+| Base | Sepolia | `0x036CbD5d42Ac945dE1e26898767295A641fD0479` |
+| Polygon | Amoy | `0x41E94Eb019C0762f367d466C86A7c4F4A80Ab8eb` |
 
-```bash
-clawdbot run "Show detailed USDC balance analytics"
-```
+## Usage
 
-Shows balance trends, change patterns, and 30-day statistics.
-
-### Monitor Specific Group
-
-```bash
-clawdbot run "Check balances for development group"
-```
-
-Monitors only addresses tagged with "development".
-
-### View History Charts
+### Check All Balances
 
 ```bash
-clawdbot run "Show balance history chart for 0x1234... last 30 days"
+clawdbot run "Check all USDC balances"
 ```
 
-Generates visual chart of balance changes over time.
+Shows all monitored addresses with current balances, changes from last check, and alerts if below threshold.
 
-### Export History
+### Add New Address
 
 ```bash
-clawdbot run "Export balance history to CSV"
+clawdbot run "Add wallet 0x1234... on ethereum with threshold 5"
 ```
 
-Exports all history records for external analysis.
+### View History
 
-## Why This Is Advanced
+```bash
+clawdbot run "Show balance history for 0x1234... on ethereum last 20 records"
+```
 
-Compared to basic balance monitors, this skill provides:
+### Get Summary
 
-| Feature | Basic | Advanced (This Skill) |
-|---------|--------|---------------------|
-| Alerts | Threshold only | **Multi-type alerts** (percentage, absolute, sudden) |
-| History | Text log | **Visual charts** with trends |
-| Notifications | None | **Telegram + Email** integration |
-| Management | Simple list | **Groups + Tags + Favorites** |
-| Analytics | None | **30-day stats + patterns** |
-| Export | None | **JSON/CSV export** |
+```bash
+clawdbot run "Show USDC balance summary"
+```
 
-## Technical Implementation
+Shows total balance across all monitored addresses with breakdown by chain.
 
-- **WebSocket support** for real-time updates (when available)
-- **Chart.js** integration for visualizations
-- **Telegram Bot API** for notifications
-- **Local SQLite** for persistent history storage
-- **Statistical analysis** for trend detection
+## Why This Matters
 
-## Use Cases
+AI agents managing multiple testnet USDC wallets need:
 
-### For AI Agents
-- Monitor multiple development wallets simultaneously
-- Get alerted before running out of testnet USDC
-- Track balance changes across weeks/months
-- Analyze spending patterns and trends
+1. **Automated monitoring** - No need to manually check balances
+2. **Proactive alerts** - Get notified before running out of testnet USDC
+3. **Multi-chain support** - Manage balances across Ethereum, Base, and Polygon
+4. **Change tracking** - Identify deposits, spending, and unusual activity
+5. **Agent-friendly** - Easy integration with other OpenClaw skills
 
-### For Humans
-- Monitor personal and business wallets separately
-- Get daily/weekly balance summaries
-- Export reports for accounting
+## Technical Details
+
+The skill uses public RPC endpoints to query ERC-20 token balances:
+
+- **Ethereum Sepolia:** `https://sepolia.drpc.org`
+- **Base Sepolia:** `https://sepolia.base.org`
+- **Polygon Amoy:** `https://rpc-amoy.polygon.technology`
+
+Balance queries use the standard ERC-20 `balanceOf` function:
+
+```solidity
+function balanceOf(address account) external view returns (uint256)
+```
+
+USDC uses 6 decimals, so balance is divided by 1,000,000 for display.
 
 ## Security
 
-- Read-only operations (no signing)
-- Local config storage (encrypted)
-- Testnet only (no mainnet funds)
-- No credentials transmitted externally
+- This skill only reads from the blockchain (read-only operations)
+- No private keys or signing required
+- Only queries public RPC endpoints
+- No sensitive data is stored or transmitted
+
+## Limitations
+
+- Testnet only (as per hackathon rules)
+- Read-only (cannot transfer USDC)
+- Dependent on RPC endpoint availability
+- Balance updates may have slight delays due to block times
+
+## License
+
+MIT License - Free for OpenClaw agents to use and extend.
